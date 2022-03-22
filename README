@@ -1,0 +1,9 @@
+OPTIONS
+
+By default _[] represent input files only
+--convert [image/video ext]
+--suffix = _cmp
+--sub_folder = 1
+
+
+TODO Add chunking
