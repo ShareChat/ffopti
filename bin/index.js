@@ -6,8 +6,8 @@ const fs = require("fs/promises");
 const fse = require("fs-extra");
 const dir = require("node-dir");
 const util = require("util");
-const pathToFfmpeg = require("ffmpeg-static");
-const ffmpeg = require("ffmpeg-cli");
+const ffmpeg = require("ffmpeg-static");
+
 const utils = require("./utils.js");
 
 exec = util.promisify(exec);
@@ -77,6 +77,11 @@ async function getValidFiles(args) {
 
 async function comp(inp) {
   try {
+    // let { default: pngquant } = await import("pngquant-bin");
+    ffmpeg = "ffmpeg";
+    pngquant = "pngquant";
+
+    exec(`${pngquant} --help`).then((res) => console.log(res));
     let ext = getExt(inp);
     let tmp = addSuffix(inp, "#");
     await fs.rename(inp, tmp);
@@ -85,16 +90,16 @@ async function comp(inp) {
     if (imageExt.includes(ext)) {
       cstats.img += 1;
       if (ext === "png")
-        cmd = `pngquant -f --strip --quality 0-80 "${tmp}" -o "${inp}"`;
+        cmd = `${pngquant} -f --strip --quality 0-80 "${tmp}" -o "${inp}"`;
       else if (ext === "jpg")
-        cmd = `ffmpeg -loglevel 16 -i "${tmp}" -y -q:v 7 "${inp}"`;
-      else cmd = `ffmpeg -loglevel 16 -i "${tmp}" -y "${inp}"`;
+        cmd = `${ffmpeg} -loglevel 16 -i "${tmp}" -y -q:v 7 "${inp}"`;
+      else cmd = `${ffmpeg} -loglevel 16 -i "${tmp}" -y "${inp}"`;
     } else if (videoExt.includes(ext)) {
       cstats.vid += 1;
       if (ext === "mp4")
-        cmd = `ffmpeg -loglevel 16 -i "${tmp}" -y -map_metadata -1 -movflags +faststart -c:v libx264 -c:a aac -b:a 64k -vf "scale=-2:min(720\\,trunc(ih/2)*2)" -profile:v main -r 30 -b:v 1000k "${inp}"`;
+        cmd = `${ffmpeg} -loglevel 16 -i "${tmp}" -y -map_metadata -1 -movflags +faststart -c:v libx264 -c:a aac -b:a 64k -vf "scale=-2:min(720\\,trunc(ih/2)*2)" -profile:v main -r 30 -b:v 1000k "${inp}"`;
       else
-        cmd = `ffmpeg -loglevel 16 -i "${tmp}" -y -map_metadata -1 -vf "scale=-2:min(720\\,trunc(ih/2)*2)" -r 30 "${inp}"`;
+        cmd = `${ffmpeg} -loglevel 16 -i "${tmp}" -y -map_metadata -1 -vf "scale=-2:min(720\\,trunc(ih/2)*2)" -r 30 -b:v 1000k "${inp}"`;
     }
 
     try {
@@ -132,7 +137,3 @@ async function compress() {
 }
 
 if (_ && _.length > 0) compress();
-
-// console.log(ffmpeg.path, pathToFfmpeg);
-// console.log(ffmpeg.runSync("-version"));
-// exec(`${pathToFfmpeg} -version`, (err, res) => console.log(res));

@@ -17,17 +17,17 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "posgtinstall": "npm run brew && npm run workflow",
+    "postinstallscript": "npm run brew && npm run workflow",
     "brew": "brew install ffmpeg pngquant",
     "workflow": "workflow_path=${HOME}/Desktop; curl -L \"https://drive.google.com/uc?export=download&id=$npm_package_config_workflow_id\" -o ${HOME}/ffopti.zip && unzip ${HOME}/ffopti.zip -d $workflow_path && rm ${HOME}/ffopti.zip"
   },
   "author": "Himanshu Dwivedi",
   "license": "ISC",
   "dependencies": {
-    "ffmpeg-cli": "^2.7.5",
     "ffmpeg-static": "^5.0.0",
     "fs-extra": "^10.0.1",
     "node-dir": "^0.1.17",
+    "pngquant-bin": "^7.0.2",
     "yargs": "^17.3.1"
   }
 }

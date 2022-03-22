@@ -36,7 +36,7 @@ const yargsOptions = {
   },
   stats: {
     describe: "Show compression stats",
-    type: "Boolean",
+    type: "boolean",
   },
 };
 
