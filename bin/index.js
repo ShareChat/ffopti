@@ -6,7 +6,7 @@ const fs = require("fs/promises");
 const fse = require("fs-extra");
 const dir = require("node-dir");
 const util = require("util");
-const ffmpeg = require("ffmpeg-static");
+// const ffmpeg = require("ffmpeg-static");
 
 const utils = require("./utils.js");
 
@@ -21,7 +21,14 @@ let { yargsOptions, getExt, addSuffix } = utils;
 let argv = yargs
   .options(yargsOptions)
   .usage(
-    "Compress images or videos files.\n\n$0 [options] [input] [input]...\n where input is file or directory."
+    `Compress image or video files.
+  
+  usage: $0 [options] [input] [input]...
+  where input is file or directory.
+  
+  Supported formats
+  Images: ${imageExt.join(", ")}
+  Videos: ${videoExt.join(", ")}`
   )
   .demandCommand(1, "Atleast one input is required").argv;
 // console.log(argv);
@@ -78,10 +85,9 @@ async function getValidFiles(args) {
 async function comp(inp) {
   try {
     // let { default: pngquant } = await import("pngquant-bin");
-    ffmpeg = "ffmpeg";
-    pngquant = "pngquant";
+    let ffmpeg = "ffmpeg";
+    let pngquant = "pngquant";
 
-    exec(`${pngquant} --help`).then((res) => console.log(res));
     let ext = getExt(inp);
     let tmp = addSuffix(inp, "#");
     await fs.rename(inp, tmp);
