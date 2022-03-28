@@ -108,7 +108,7 @@ async function comp(inp) {
     try {
       await exec(cmd);
       silent || console.log(`${inp} compressed`);
-      await fs.rm(tmp);
+      await fs.unlink(tmp);
     } catch (err) {
       console.error(`${inp} compression failed: `, err);
       replace ? await fs.rename(tmp, inp) : await fs.rm(tmp);
