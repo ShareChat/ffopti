@@ -1,9 +1,18 @@
-OPTIONS
+Compress image or video files seamlessly.
 
-By default _[] represent input files only
---convert [image/video ext]
---suffix = _cmp
---sub_folder = 1
+ffopti
 
+usage: ffopti [options] [input] [input]...
+where input is file or directory.
 
-TODO Add chunking
+Supported formats
+Images: jpg, png, webp, bmp, tiff, gif
+Videos: mp4, mov, webm, mkv, avi, wmv, flv
+
+Options:
+--help Show help [boolean]
+--version Show version number [boolean]
+-r, --replace Replace original [boolean]
+-s, --silent Run quietly with no info [boolean]
+--suffix Final compressed path suffix [string] [default: "_cmp"]
+--stats Show compression stats [boolean]

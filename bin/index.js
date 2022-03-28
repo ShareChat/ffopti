@@ -6,11 +6,12 @@ const fs = require("fs/promises");
 const fse = require("fs-extra");
 const dir = require("node-dir");
 const util = require("util");
-// const ffmpeg = require("ffmpeg-static");
-
 const utils = require("./utils.js");
 
 exec = util.promisify(exec);
+
+const ffmpeg = "ffmpeg";
+const pngquant = "pngquant";
 
 const SUFFIX = "_cmp";
 const imageExt = ["jpg", "png", "webp", "bmp", "tiff", "gif"];
@@ -31,7 +32,7 @@ let argv = yargs
   Videos: ${videoExt.join(", ")}`
   )
   .demandCommand(1, "Atleast one input is required").argv;
-// console.log(argv);
+
 let { _, replace, suffix, silent, stats } = argv;
 suffix = suffix && suffix.length > 0 ? suffix : SUFFIX;
 const cstats = { img: 0, vid: 0 };
@@ -84,10 +85,6 @@ async function getValidFiles(args) {
 
 async function comp(inp) {
   try {
-    // let { default: pngquant } = await import("pngquant-bin");
-    let ffmpeg = "ffmpeg";
-    let pngquant = "pngquant";
-
     let ext = getExt(inp);
     let tmp = addSuffix(inp, "#");
     await fs.rename(inp, tmp);
