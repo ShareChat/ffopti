@@ -13,6 +13,8 @@ exec = util.promisify(exec);
 const ffmpeg = "ffmpeg";
 const pngquant = "pngquant";
 
+const CHUNK_IMG = 50;
+const CHUNK_VID = 5;
 const SUFFIX = "_cmp";
 const imageExt = ["jpg", "png", "webp", "bmp", "tiff", "gif"];
 const videoExt = ["mp4", "mov", "webm", "mkv", "avi", "wmv", "flv"];
@@ -22,14 +24,16 @@ let { yargsOptions, getExt, addSuffix } = utils;
 let argv = yargs
   .options(yargsOptions)
   .usage(
-    `Compress image or video files.
+    `
+  Compress image or video files.
   
   usage: $0 [options] [input] [input]...
   where input is file or directory.
   
   Supported formats
   Images: ${imageExt.join(", ")}
-  Videos: ${videoExt.join(", ")}`
+  Videos: ${videoExt.join(", ")}
+  `
   )
   .demandCommand(1, "Atleast one input is required").argv;
 
@@ -39,6 +43,7 @@ const cstats = { img: 0, vid: 0 };
 const timer = "compression_time";
 
 const validFiles = [];
+const validFilesChunks = [];
 
 async function getValidFiles(args) {
   if (!args || !Array.isArray(args)) return;
@@ -83,6 +88,30 @@ async function getValidFiles(args) {
   }
 }
 
+function chunk() {
+  let tempImg = [];
+  let tempVid = [];
+
+  for (const inp of validFiles) {
+    let ext = getExt(inp);
+    if (imageExt.includes(ext)) {
+      tempImg.push(inp);
+      if (tempImg.length >= CHUNK_IMG) {
+        validFilesChunks.push(tempImg);
+        tempImg = [];
+      }
+    } else if (videoExt.includes(ext)) {
+      tempVid.push(inp);
+      if (tempVid.length >= CHUNK_VID) {
+        validFilesChunks.push(tempVid);
+        tempVid = [];
+      }
+    }
+  }
+  if (tempImg.length > 0) validFilesChunks.push(tempImg);
+  if (tempVid.length > 0) validFilesChunks.push(tempVid);
+}
+
 async function comp(inp) {
   try {
     let ext = getExt(inp);
@@ -111,19 +140,21 @@ async function comp(inp) {
       await fs.unlink(tmp);
     } catch (err) {
       console.error(`${inp} compression failed: `, err);
-      replace ? await fs.rename(tmp, inp) : await fs.rm(tmp);
+      replace ? await fs.rename(tmp, inp) : await fs.unlink(tmp);
     }
   } catch (err) {
     console.error(err);
   }
 }
 
-function compressFiles() {
-  return Promise.all(
-    validFiles.map((inp) => {
-      return comp(inp);
-    })
-  );
+async function compressFiles() {
+  for (const inputFiles of validFilesChunks) {
+    await Promise.all(
+      inputFiles.map((inp) => {
+        return comp(inp);
+      })
+    );
+  }
 }
 
 function showStats() {
@@ -135,6 +166,7 @@ function showStats() {
 async function compress() {
   stats && console.time(timer);
   await getValidFiles(_);
+  chunk();
   await compressFiles();
   stats && showStats();
 }
