@@ -1,19 +1,29 @@
 {
   "name": "ffopti",
   "version": "1.0.0",
-  "description": "CLI tool for local image optimization services",
+  "description": "CLI tool for local assets optimization services",
   "main": "bin/index.js",
-  "config": {
-    "workflow_id": "1_g0bgcvUt_zBcVTe7UIOlpojqOJoEfiy"
-  },
   "keywords": [
     "cli",
     "compress",
     "ffmpeg",
     "optimize"
   ],
+  "author": "Himanshu Dwivedi",
+  "license": "MIT",
   "bin": {
     "ffopti": "./bin/index.js"
+  },
+  "homepage": "https://github.com/ShareChat/ffopti",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShareChat/ffopti.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ShareChat/ffopti/issues"
+  },
+  "config": {
+    "workflow_id": "1_g0bgcvUt_zBcVTe7UIOlpojqOJoEfiy"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -21,6 +31,10 @@
     "brew": "brew install ffmpeg pngquant",
     "workflow": "workflow_path=${HOME}/Desktop; curl -L \"https://drive.google.com/uc?export=download&id=$npm_package_config_workflow_id\" -o ${HOME}/ffopti.zip && unzip ${HOME}/ffopti.zip -d $workflow_path && rm ${HOME}/ffopti.zip"
   },
+  "engines": {
+    "node": ">14.2.0"
+  },
+  "os": ["darwin"],
   "pkg": {
     "scripts": "build/**/*.js",
     "assets": "assets/**/*",
@@ -29,8 +43,6 @@
     ],
     "outputPath": "dist"
   },
-  "author": "Himanshu Dwivedi",
-  "license": "ISC",
   "dependencies": {
     "fs-extra": "^10.0.1",
     "node-dir": "^0.1.17",

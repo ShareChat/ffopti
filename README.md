@@ -12,6 +12,7 @@ Read more about it from the [blog](https://sharechat.com/blogs/engineering/makin
 
 Install via brew
 
+`brew tap ShareChat/ffopti`  
 `brew install ffopti`
 
 ## Usage
