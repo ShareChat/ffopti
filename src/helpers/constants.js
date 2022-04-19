@@ -1,4 +1,5 @@
 const ffmpeg = "ffmpeg";
+const ffprobe = "ffprobe";
 const pngquant = "pngquant";
 
 const CHUNK_IMG = 50;
@@ -10,6 +11,7 @@ const videoExt = ["mp4", "mov", "webm", "mkv", "avi", "wmv", "flv"];
 
 module.exports = {
   ffmpeg,
+  ffprobe,
   pngquant,
   CHUNK_IMG,
   CHUNK_VID,

@@ -28,19 +28,27 @@ const options = {
     describe: "Final compressed path suffix",
     type: "string",
   },
+  i: {
+    alias: "info",
+    describe: "Print image/video information",
+    type: "array",
+    requiresArg: true,
+  },
   stats: {
     describe: "Show compression stats",
     type: "boolean",
   },
 };
 
-const argv = yargs
-  .options(options)
-  .usage(usage)
-  .demandCommand(1, "Atleast one input is required").argv;
+const y = yargs.options(options).usage(usage);
+const argv = y.argv;
 
 if (!argv.suffix || argv.suffix.length <= 0) {
   argv.suffix = SUFFIX;
+}
+
+if (!(argv._ && argv._.length > 0) && !argv.info) {
+  y.showHelp();
 }
 
 module.exports = argv;

@@ -10,7 +10,7 @@ const {
 } = require("../helpers/utils.js");
 const { CHUNK_IMG, CHUNK_VID } = require("../helpers/constants.js");
 
-async function getValidFiles(args) {
+async function getValidFiles(args, rep = replace, suf = suffix) {
   let validFiles = [];
 
   if (!args || !Array.isArray(args)) return;
@@ -25,11 +25,11 @@ async function getValidFiles(args) {
       }
       if (fileStat.isFile()) {
         if (isValidExt(inp)) {
-          if (replace) {
+          if (rep) {
             validFiles.push(inp);
             continue;
           }
-          let out = addSuffix(inp, suffix);
+          let out = addSuffix(inp, suf);
           fse.copyFileSync(inp, out);
           validFiles.push(out);
         } else {
@@ -37,10 +37,10 @@ async function getValidFiles(args) {
         }
       } else if (fileStat.isDirectory()) {
         let out;
-        if (replace) {
+        if (rep) {
           out = inp;
         } else {
-          out = addSuffix(inp, suffix);
+          out = addSuffix(inp, suf);
           fse.emptyDirSync(out);
           fse.copySync(inp, out);
         }
