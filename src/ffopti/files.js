@@ -2,16 +2,15 @@ const fse = require("fs-extra");
 const dir = require("node-dir");
 
 const { replace, suffix } = require("../helpers/options.js");
-const { getExt, addSuffix } = require("../helpers/utils.js");
 const {
-  CHUNK_IMG,
-  CHUNK_VID,
-  imageExt,
-  videoExt,
-} = require("../helpers/constants.js");
+  addSuffix,
+  isImage,
+  isVideo,
+  isValidExt,
+} = require("../helpers/utils.js");
+const { CHUNK_IMG, CHUNK_VID } = require("../helpers/constants.js");
 
 async function getValidFiles(args) {
-  const validExt = [...imageExt, ...videoExt];
   let validFiles = [];
 
   if (!args || !Array.isArray(args)) return;
@@ -25,7 +24,7 @@ async function getValidFiles(args) {
         continue;
       }
       if (fileStat.isFile()) {
-        if (validExt.includes(getExt(inp))) {
+        if (isValidExt(inp)) {
           if (replace) {
             validFiles.push(inp);
             continue;
@@ -47,7 +46,7 @@ async function getValidFiles(args) {
         }
         files = await dir.promiseFiles(out);
         files.forEach((file) => {
-          if (validExt.includes(getExt(file))) validFiles.push(file);
+          if (isValidExt(file)) validFiles.push(file);
         });
       }
     } catch (err) {
@@ -65,14 +64,13 @@ function chunkFiles(validFiles) {
   if (!validFiles || validFiles.length <= 0) return [];
 
   for (const inp of validFiles) {
-    let ext = getExt(inp);
-    if (imageExt.includes(ext)) {
+    if (isImage(inp)) {
       tempImg.push(inp);
       if (tempImg.length >= CHUNK_IMG) {
         validFilesChunks.push(tempImg);
         tempImg = [];
       }
-    } else if (videoExt.includes(ext)) {
+    } else if (isVideo(inp)) {
       tempVid.push(inp);
       if (tempVid.length >= CHUNK_VID) {
         validFilesChunks.push(tempVid);
